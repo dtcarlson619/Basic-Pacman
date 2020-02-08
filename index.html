@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Pacman Demo</title>
+        <style type="text/css">
+
+            *{
+                margin:0px;
+                padding:0px;
+            }
+
+            body{
+               background-color: black;
+            }
+            div.row div{
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+            }
+            .row{
+                line-height: 0;
+            }
+            div.brick{
+                background-color: blue;
+            }
+            div.coin{
+                background-image:url("coin.gif");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+            }
+            div.cherry{
+                background-image:url("cherry.jpeg");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+            }
+            div#pacman{
+                background-image:url("pacman.gif");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+                width: 20px;
+                height: 20px;
+                position: absolute;  
+            }
+            div#ghost{
+                background-image:url("ghosty.gif");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+                width: 20px;
+                height: 20px;
+                position: absolute;
+            }
+            div#score {
+                width: 30px;
+                height: 30px;
+                border: 1px solid white;
+                color: white;
+                text-align: center;
+                padding: 7px;
+                position: absolute;
+                top: 0px;
+                left: 470px;
+            }
+            div.empty{
+            
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <div id='container'>
+            <div id='world'></div>
+            <div id='pacman'></div>
+            <div id='ghost'></div>
+            <div id='score'></div>
+        </div>
+        <script>
+            var world = [
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+                [2,0,1,1,1,1,1,2,4,1,1,1,1,1,1,0,0,1,1,1,4,2],
+                [2,0,0,0,0,0,1,2,1,0,0,0,0,0,0,0,0,1,1,1,4,2],
+                [2,1,2,2,0,0,1,2,1,0,2,2,2,2,2,0,0,2,2,2,2,2],
+                [2,1,1,2,0,0,1,2,0,0,2,4,1,1,1,0,0,1,1,1,1,2],
+                [2,1,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2],
+                [2,1,1,2,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,2],
+                [2,0,0,2,0,1,1,1,1,1,2,2,2,2,2,2,4,0,0,1,1,2],
+                [2,0,1,2,0,1,1,1,1,1,4,1,1,1,1,2,1,0,0,1,1,2],
+                [2,0,1,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2,2,2],
+                [2,0,1,1,4,4,0,1,1,1,1,0,1,2,1,0,0,0,1,1,1,2],
+                [2,0,1,1,0,0,0,0,0,0,0,1,1,2,1,1,0,0,1,1,1,2],
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+            ];
+            
+            var score = 0;
+
+            var pacman = {
+                x: 1,
+                y: 1
+            };
+
+            var ghost = {
+                x: 16,
+                y: 3
+            };
+
+            function displayWorld(){
+                var output = "";
+                for(var i=0; i<world.length; i++){
+                    output += "\n<div class='row'>\n";
+                    for(var j=0; j<world[i].length; j++){
+                        if(world[i][j] == 2){
+                            output += "<div class='brick'></div>";
+                        }
+                        if(world[i][j] == 1){
+                            output += "<div class='coin'></div>";
+                        }
+                        if(world[i][j] == 0){
+                            output += "<div class='empty'></div>";
+                        }
+                        if(world[i][j] == 4){
+                            output += "<div class='cherry'></div>";
+                        }
+                    }
+                    output += "\n</div>";
+                }
+                // console.log(output);
+                document.getElementById('world').innerHTML = output;
+            }
+
+            function displayPacman(){
+                document.getElementById('pacman').style.top = pacman.y*20+"px";
+                document.getElementById('pacman').style.left = pacman.x*20+"px";
+            }
+
+            function displayGhost(){
+                document.getElementById('ghost').style.top = ghost.y*20+"px";
+                document.getElementById('ghost').style.left = ghost.x*20+"px";
+            }
+
+            function displayScore(){
+                document.getElementById('score').innerHTML = score;
+            }
+
+            displayWorld();
+            displayPacman();
+            displayGhost();
+            displayScore();
+
+            document.onkeydown = function(e){
+                if(e.keyCode == 37){
+                    pacman.x --;
+                    var img = document.getElementById('pacman');
+                    img.style.transform = 'rotate(-180deg)'
+                    if(world[pacman.y][pacman.x] == 2){
+                        pacman.x ++;
+                    }
+                }
+                else if(e.keyCode == 39){
+                    pacman.x ++;
+                    var img = document.getElementById('pacman');
+                    img.style.transform = 'rotate(0deg)'
+                    if(world[pacman.y][pacman.x] == 2){
+                        pacman.x --;
+                    }
+                }
+                else if(e.keyCode == 38){
+                    pacman.y --;
+                    var img = document.getElementById('pacman');
+                    img.style.transform = 'rotate(-90deg)'
+                    if(world[pacman.y][pacman.x] == 2){
+                        pacman.y ++;
+                    }
+                }
+                else if(e.keyCode == 40){
+                    pacman.y ++;
+                    var img = document.getElementById('pacman');
+                    img.style.transform = 'rotate(90deg)'
+                    if(world[pacman.y][pacman.x] == 2){
+                        pacman.y --;
+                    }
+                }
+                if(world[pacman.y][pacman.x] == 1){
+                    world[pacman.y][pacman.x] = 0;
+                    score += 10;
+                    displayWorld();
+                    displayScore();
+                }  
+                if(world[pacman.y][pacman.x] == 4){
+                    world[pacman.y][pacman.x] = 0;
+                    score += 50;
+                    displayWorld();
+                    displayScore();
+                }  
+                // console.log(e.keyCode);
+                displayPacman();
+            }
+        </script>
+    </body>
+</html>
